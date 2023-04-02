@@ -1,0 +1,52 @@
+{% extends 'header.html' %}
+
+{% block content %}
+
+<div class="row" >
+    <div class="col-2" ></div>
+    <div class="col-2">
+
+    
+<table class="table-striped">
+<th>
+    <tr>
+<td><h3>Deployment Field</h3></td>
+
+    </tr>
+</th>
+<tbody>
+    {% for col in col_names %}
+    <tr>
+        
+        <td>{{col}}</td>
+     
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<div class="col-8" >
+<table class="table-striped">
+    <th>
+        <tr>
+    <td><h3>Value</h3></td>
+    
+        </tr>
+    </th>
+    <tbody>
+
+        {% for object in row %}
+        <tr>
+            <td>{{ object }}</td>
+        </tr>
+            {% endfor %}
+       
+        </tbody>
+        </table>
+            
+    </div>  
+        
+</div>
+
+
+{% endblock content %}

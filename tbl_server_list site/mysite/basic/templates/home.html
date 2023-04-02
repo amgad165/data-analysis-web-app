@@ -1,0 +1,401 @@
+{% extends 'header.html' %}
+
+
+{% block customcss %}
+<style>
+
+#table td{
+font-size: 80% ;
+}
+.form_div{
+    margin-top: 20px;
+    margin-bottom: 30px;
+background-color: whitesmoke; 
+   background-size: cover;
+    width: 100%;
+    height: 35vh;
+    padding-top: 20px;
+}
+
+.dt-buttons{
+  margin-left: 15px;
+  margin-top: 18px;
+
+}
+
+.card{
+  height: 8rem;
+}
+
+
+/* checkbox styles */
+.item {
+      width: 33%;
+      margin: 2px 1% 2px 1%;
+      border: 0;
+    }
+
+    .item li {
+      list-style: none;
+    }
+
+    .scrollable-dropdown-list{
+      position: absolute;
+      max-height:200px;
+      width:33%;
+      overflow-y:scroll;
+      overflow-x:auto;
+      margin: 0;
+      padding-left: 1em;
+      border-style: solid;
+      border-width: thin;
+      border-color: grey;
+      background-color: white;
+    }
+
+    legend {
+      margin-bottom: 0;
+      font-size: 18px;
+    }
+
+    label {
+      font-weight: normal;
+      margin-left:20px;
+    }
+
+
+    .legend-container {
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      padding: 0;
+      margin-bottom: 0px;
+      font-size: 21px;
+      line-height: inherit;
+      color: #333;
+      border: 0;
+      border-bottom: none;
+    }
+
+    fieldset {
+      border-width: thin;
+      border-color: gray;
+      border-style: solid;
+      width:50px;
+    }
+
+    /* Note that all the browser-specific animation stuff is totally optional, but provides a nice subtle animation for the dropdown effect */
+
+    fieldset ul.scrollable-dropdown-list {
+      display: none;
+      animation :slide-down .3s ease-out;
+      -moz-animation: slide-down .3s ease-out;
+    }
+
+    fieldset.selected ul.scrollable-dropdown-list {
+      display: block;
+     animation : slide-down .3s ease-out;
+      -moz-animation: slide-down .3s ease-out;
+    }
+
+
+
+    @keyframes slide-down {
+      0% {
+        opacity: 0;
+        -webkit-transform: translateY(-10%);
+      }
+      100% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+      }
+    }
+
+    @-moz-keyframes slide-down {
+      0% {
+        opacity: 0;
+        -moz-transform: translateY(-10%);
+      }
+      100% {
+        opacity: 1;
+        -moz-transform: translateY(0);
+      }
+    }
+
+.checkbox_style{
+  margin-bottom: 20px; 
+  font-size: large;
+  
+}
+.checkbox_style label{
+margin-right: 50px;
+  
+}
+#table_filter{
+  margin-right: 200px;
+  text-align: center;
+}
+</style>
+
+{% endblock customcss %}
+    
+
+{% block content %}
+
+<div style="margin-bottom: 50px;" class = "text-center">
+
+	<h1>Reporting Servers List</h1> 
+
+</div>
+
+<!-- 
+form area  -->
+
+<form class="border border-light form_div" method="POST">
+  {% csrf_token %}
+  <div class="container" >
+  
+ 
+
+ 
+<div class="row align-items-center" style="margin-bottom: 20px;" >
+<div  class="col-3 " >
+  <div class="dropdown ">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+     SQL Version
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      
+      {% for value in sql_versions %}
+      <input type="checkbox" value={{value.0}} class="chkvalues">{{value.0}}<br>
+      {% endfor %}
+        
+    
+
+    </div>
+    <input type="text" id="txtdisplay" hidden  readonly name="sqlversion"/>
+
+  </div>
+</div>
+
+<div  class="col-3 " >
+  <div class="dropdown ">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Group
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      
+      {% for value in groups %}
+      <input type="checkbox" value={{value.0}} class="chkvalues2">{{value.0}}<br>
+      {% endfor %}
+        
+    
+
+    </div>
+    <input type="text" id="txtdisplay2" hidden  readonly name="group"/>
+
+  </div>
+</div>
+
+<div class="form-group col-3">
+  <label for="exampleSelect">Region</label>
+  <select name="region" class="form-control" id="exampleSelect">
+    
+    {% for value in  regions %}
+    <option>{{value.0}}</option>
+    {% endfor %}
+      
+    
+
+  </select>
+</div>
+</div>
+<div class="row align-items-center checkbox_style">
+<div class="col-8" >
+<div class="form-group form-check">
+  
+  {% for value in status_names %}
+  <input name="status"  value={{value.0}} type="checkbox" class="form-check-input" id="exampleCheck1">
+  <label class="form-check-label" for="exampleCheck1">{{value.0}}</label>
+  {% endfor %}
+    
+
+</div>
+</div>
+</div>
+<div class="row align-items-center">
+  <div class="col-3" ></div>
+<div class="form-group col-3">
+  <label for="exampleSelect">Application Number</label>
+<input class="form-control" name="ait" type="input">
+</div>
+
+<div class="col-2"></div>
+<input  type="submit" class="btn btn-secondary col-4" value="Generate Report" />
+</div>
+</div>
+ </form>
+
+
+ <!-- Data displayed in the table -->
+<div class="row container justify-content-center">
+
+
+<div class="col-2" ></div>
+    <div class="col-10">   
+        <table id="table" class="display" style = "width:100%">
+            <thead>
+              <tr>
+                  {% for col in col_names %}
+                  
+                      
+                      <td>{{col}}</td>
+                   
+                  
+                  {% endfor %}
+
+                </tr>
+                    
+            </thead>
+            <tbody>
+              
+               
+ {% for  row in df %}
+                <tr>
+                  {% for cell in row %}
+                  
+                    <td>
+                      {{cell}}             
+                    </td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+
+             
+            </tbody>
+      
+        </table>
+        
+</div>
+</div>
+{% endblock content %}
+{% block script_content %}
+
+<script>
+
+  // datatable plugins :
+// https://datatables.net/forums/discussion/45605/export-only-the-selected-row
+
+  $(document).ready(function() {
+      $('#table').DataTable( {
+
+        // function to make drop down filters in this link for more info: https://www.datatables.net/examples/api/multi_filter_select.html
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+ 
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                  
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
+     ,
+          dom: 'lBfrtip',
+          buttons: [
+              'selectAll',
+              'copy',
+              {
+                
+                  extend: 'csv',
+                  header: false,
+                  title: '',
+                  exportOptions: {
+                      columns: [ 2 ]
+                  }},
+                  {
+                      extend: 'excel',
+                      header: false,
+                      title: '',
+                      exportOptions: {
+                          columns: [ 2 ]
+                      }},
+          ],
+          "oLanguage": {
+              "sSearch": "Search All Fields"
+            },
+          select: true
+      
+      
+      
+      } );
+  } );
+  
+  
+      </script>
+
+
+<script>
+  // <!-- script for removing unwanted filters like servers coloumn -->
+
+  $(document).ready(function() {
+   
+    $('.unwanted_filter select').remove();   
+});
+</script>
+
+
+<!-- script for menu checkboxes -->
+<script>
+  
+$('.chkvalues').click(function ()
+   {
+    var txt = ""  
+    
+    $('.chkvalues:checked').each(function()
+    {
+      if(this.checked){
+      txt+=$(this).val()+",";
+      console.log(txt)
+    }
+    })
+
+   $('#txtdisplay').val(txt);
+  });
+
+
+</script>
+
+<script>
+  
+  $('.chkvalues2').click(function ()
+     {
+      var txt = ""  
+      
+      $('.chkvalues2:checked').each(function()
+      {
+        if(this.checked){
+        txt+=$(this).val()+",";
+      }
+      })
+  
+     $('#txtdisplay2').val(txt);
+    });
+  
+  
+  </script>
+{% endblock script_content %}
+
+
+    
